@@ -15,11 +15,11 @@ class Toolbar extends Component {
                         <i className={this.classNameForSelectAll()}></i>
                     </button>
 
-                    <button className="btn btn-default" onClick={this.markAllSelectedAsReadClicked}>
+                    <button className="btn btn-default" disabled={this.someMessagesAlreadySelected() ? "" : "disabled"} onClick={this.markAllSelectedAsReadClicked}>
                         Mark As Read
                     </button>
 
-                    <button className="btn btn-default" onClick={this.markAllSelectedAsUnreadClicked}>
+                    <button className="btn btn-default" disabled={this.someMessagesAlreadySelected() ? "" : "disabled"} onClick={this.markAllSelectedAsUnreadClicked}>
                         Mark As Unread
                     </button>
 
@@ -37,7 +37,7 @@ class Toolbar extends Component {
                         <option value="gschool">gschool</option>
                     </select>
 
-                    <button className="btn btn-default">
+                    <button className="btn btn-default" onClick={this.deleteSelectedMessagesClicked}>
                         <i className="fa fa-trash-o"></i>
                     </button>
                 </div>
@@ -77,6 +77,11 @@ class Toolbar extends Component {
         this.props.bulkMessageChangeCallback(updatedMessages);
     };
 
+    deleteSelectedMessagesClicked = () => {
+        const notDeleted = this.props.messages.filter(aMessage => !aMessage.selected);
+        this.props.bulkMessageChangeCallback(notDeleted);
+    };
+
     classNameForSelectAll = () => {
         if (this.allMessagesAlreadySelected()) {
             return "fa fa-check-square-o";
@@ -88,6 +93,7 @@ class Toolbar extends Component {
             return "fa fa-square-o";
         }
     };
+
     allMessagesAlreadySelected = () => {
         return this.props.messages.length === this.props.messages.filter(aMessage => aMessage.selected === true).length
     };
