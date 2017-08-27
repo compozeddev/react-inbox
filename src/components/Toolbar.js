@@ -43,7 +43,8 @@ class Toolbar extends Component {
                         <option value="gschool">gschool</option>
                     </select>
 
-                    <button className="btn btn-default" onClick={this.deleteSelectedMessagesClicked}>
+                    <button className="btn btn-default" onClick={this.deleteSelectedMessagesClicked}
+                            disabled={this.someMessagesAlreadySelected() ? "" : "disabled"}>
                         <i className="fa fa-trash-o"></i>
                     </button>
                 </div>
