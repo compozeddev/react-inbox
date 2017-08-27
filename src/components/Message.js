@@ -1,7 +1,6 @@
-import React, {Component} from 'react';
+import React from 'react';
 
-
-class Message extends Component {
+class Message extends React.Component {
 
     constructor(props) {
         super(props);
@@ -19,7 +18,7 @@ class Message extends Component {
                         <div className="col-xs-2">
                             <input type="checkbox" checked={this.state.message.selected}/>
                         </div>
-                        <div className="col-xs-2">
+                        <div className="col-xs-2"  onClick={this.onStarClicked}>
                             <i className={`star fa ${(this.state.message.starred) ? "fa-star" : "fa-star-o"}`}></i>
                         </div>
                     </div>
@@ -37,10 +36,19 @@ class Message extends Component {
     renderMessageLabels = () => {
         return this.state.message.labels.map(
             (aLabel) => (
-                <span key={`message-${this.state.message.id}-${aLabel}`} className="label label-warning"> {aLabel} </span>)
+                <span key={`message-${this.state.message.id}-${aLabel}`}
+                      className="label label-warning"> {aLabel} </span>)
         )
     };
 
+    onStarClicked = () => {
+        const updatedMessage = {
+            ...this.state.message,
+            starred: !this.state.message.starred
+        };
+        this.setState({message: updatedMessage});
+
+    }
 }
 
 export default Message;
