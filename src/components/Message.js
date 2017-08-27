@@ -1,16 +1,18 @@
 import React from 'react';
 
 class Message extends React.Component {
+    // receives a message and messageChangedCallback in props
 
     shouldComponentUpdate(nextProps) {
         return !(nextProps.message.id === this.props.message.id
-        && nextProps.message.subject === this.props.message.subject
-        && nextProps.message.read === this.props.message.read
-        && nextProps.message.starred === this.props.message.starred
-        && nextProps.message.selected === this.props.message.selected
-        && nextProps.message.labels.length === this.props.message.labels.length
+            && nextProps.message.subject === this.props.message.subject
+            && nextProps.message.read === this.props.message.read
+            && nextProps.message.starred === this.props.message.starred
+            && nextProps.message.selected === this.props.message.selected
+            && nextProps.message.labels.length === this.props.message.labels.length
         )
     }
+
     render() {
         return (
             <div
@@ -18,9 +20,10 @@ class Message extends React.Component {
                 <div className="col-xs-1">
                     <div className="row">
                         <div className="col-xs-2">
-                            <input type="checkbox" checked={!!this.props.message.selected} onChange={this.onCheckboxClicked}/>
+                            <input type="checkbox" checked={!!this.props.message.selected}
+                                   onChange={this.onCheckboxClicked}/>
                         </div>
-                        <div className="col-xs-2"  onClick={this.onStarClicked}>
+                        <div className="col-xs-2" onClick={this.onStarClicked}>
                             <i className={`star fa ${(this.props.message.starred) ? "fa-star" : "fa-star-o"}`}></i>
                         </div>
                     </div>

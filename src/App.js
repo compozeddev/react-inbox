@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Messages from './components/Messages';
+import Toolbar from './components/Toolbar';
 import './App.css';
 
 const seedData = [
@@ -84,6 +85,7 @@ class App extends Component {
     render() {
         return (
             <div>
+                <Toolbar messages={this.state.messages} bulkMessageChangeCallback={this.bulkMessageChangeCallback}/>
                 <Messages messages={this.state.messages} messageChangedCallback={this.messageChangedCallback}/>
             </div>
         )
@@ -98,6 +100,10 @@ class App extends Component {
                 }
             }
         );
+        this.setState({messages: updatedMessages});
+    };
+
+    bulkMessageChangeCallback = (updatedMessages) => {
         this.setState({messages: updatedMessages});
     }
 }
