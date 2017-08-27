@@ -15,22 +15,28 @@ class Toolbar extends Component {
                         <i className={this.classNameForSelectAll()}></i>
                     </button>
 
-                    <button className="btn btn-default" disabled={this.someMessagesAlreadySelected() ? "" : "disabled"} onClick={this.markAllSelectedAsReadClicked}>
+                    <button className="btn btn-default" disabled={this.someMessagesAlreadySelected() ? "" : "disabled"}
+                            onClick={this.markAllSelectedAsReadClicked}>
                         Mark As Read
                     </button>
 
-                    <button className="btn btn-default" disabled={this.someMessagesAlreadySelected() ? "" : "disabled"} onClick={this.markAllSelectedAsUnreadClicked}>
+                    <button className="btn btn-default" disabled={this.someMessagesAlreadySelected() ? "" : "disabled"}
+                            onClick={this.markAllSelectedAsUnreadClicked}>
                         Mark As Unread
                     </button>
 
-                    <select className="form-control label-select">
+                    <select className="form-control label-select"
+                            disabled={this.someMessagesAlreadySelected() ? "" : "disabled"}
+                            onChange={this.onApplyLabel}>
                         <option>Apply label</option>
                         <option value="dev">dev</option>
                         <option value="personal">personal</option>
                         <option value="gschool">gschool</option>
                     </select>
 
-                    <select className="form-control label-select">
+                    <select className="form-control label-select"
+                            disabled={this.someMessagesAlreadySelected() ? "" : "disabled"}
+                            onChange={this.onRemoveLabel}>
                         <option>Remove label</option>
                         <option value="dev">dev</option>
                         <option value="personal">personal</option>
@@ -82,6 +88,34 @@ class Toolbar extends Component {
         this.props.bulkMessageChangeCallback(notDeleted);
     };
 
+    onApplyLabel = (e) => {
+        const updatedMessages = this.props.messages.map((aMessage) => {
+            if (!aMessage.selected || aMessage.labels.find(aLabel => aLabel === e.target.value)) {
+                return aMessage
+            } else {
+                return {
+                    ...aMessage,
+                    labels: [...aMessage.labels, (e.target.value)]
+                }
+            }
+        });
+        this.props.bulkMessageChangeCallback(updatedMessages);
+    };
+
+    onRemoveLabel = (e) => {
+        const updatedMessages = this.props.messages.map((aMessage) => {
+            if (!aMessage.selected) {
+                return aMessage
+            } else {
+                return {
+                    ...aMessage,
+                    labels: aMessage.labels.filter(aLabel => aLabel !== e.target.value)
+                }
+            }
+        });
+        this.props.bulkMessageChangeCallback(updatedMessages);
+    };
+
     classNameForSelectAll = () => {
         if (this.allMessagesAlreadySelected()) {
             return "fa fa-check-square-o";
@@ -124,5 +158,6 @@ class Toolbar extends Component {
         this.props.bulkMessageChangeCallback(updatedMessages);
     };
 }
+
 export default Toolbar;
 
