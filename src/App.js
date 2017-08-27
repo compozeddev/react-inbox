@@ -84,9 +84,21 @@ class App extends Component {
     render() {
         return (
             <div>
-                <Messages messages={this.state.messages}/>
+                <Messages messages={this.state.messages} messageChangedCallback={this.messageChangedCallback}/>
             </div>
         )
+    }
+
+    messageChangedCallback = (aMessage) => {
+        const updatedMessages = this.state.messages.map( (stateMessage) => {
+                if (stateMessage.id === aMessage.id) {
+                    return aMessage
+                } else {
+                    return stateMessage
+                }
+            }
+        );
+        this.setState({messages: updatedMessages});
     }
 }
 export default App;

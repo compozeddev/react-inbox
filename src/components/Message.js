@@ -2,31 +2,33 @@ import React from 'react';
 
 class Message extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            message: props.message
-        };
-    };
-
+    shouldComponentUpdate(nextProps) {
+        return !(nextProps.message.id === this.props.message.id
+        && nextProps.message.subject === this.props.message.subject
+        && nextProps.message.read === this.props.message.read
+        && nextProps.message.starred === this.props.message.starred
+        && nextProps.message.selected === this.props.message.selected
+        && nextProps.message.labels.length === this.props.message.labels.length
+        )
+    }
     render() {
         return (
             <div
-                className={`row message ${(this.state.message.read) ? "read" : "unread"} ${(this.state.message.selected) ? "selected" : "" }`}>
+                className={`row message ${(this.props.message.read) ? "read" : "unread"} ${(this.props.message.selected) ? "selected" : "" }`}>
                 <div className="col-xs-1">
                     <div className="row">
                         <div className="col-xs-2">
-                            <input type="checkbox" checked={!!this.state.message.selected} onChange={this.onCheckboxClicked}/>
+                            <input type="checkbox" checked={!!this.props.message.selected} onChange={this.onCheckboxClicked}/>
                         </div>
                         <div className="col-xs-2"  onClick={this.onStarClicked}>
-                            <i className={`star fa ${(this.state.message.starred) ? "fa-star" : "fa-star-o"}`}></i>
+                            <i className={`star fa ${(this.props.message.starred) ? "fa-star" : "fa-star-o"}`}></i>
                         </div>
                     </div>
                 </div>
                 <div className="col-xs-11">
                     {this.renderMessageLabels()}
                     <a href="#">
-                        {this.state.message.subject}
+                        {this.props.message.subject}
                     </a>
                 </div>
             </div>
@@ -34,30 +36,29 @@ class Message extends React.Component {
     }
 
     renderMessageLabels = () => {
-        return this.state.message.labels.map(
+        return this.props.message.labels.map(
             (aLabel) => (
-                <span key={`message-${this.state.message.id}-${aLabel}`}
+                <span key={`message-${this.props.message.id}-${aLabel}`}
                       className="label label-warning"> {aLabel} </span>)
         )
     };
 
     onStarClicked = () => {
         const updatedMessage = {
-            ...this.state.message,
-            starred: !this.state.message.starred
+            ...this.props.message,
+            starred: !this.props.message.starred
         };
-        this.setState({message: updatedMessage});
+        this.props.messageChangedCallback(updatedMessage);
     };
 
     onCheckboxClicked = () => {
         const updatedMessage = {
-            ...this.state.message,
-            selected: !this.state.message.selected
+            ...this.props.message,
+            selected: !this.props.message.selected
         };
-        this.setState({message: updatedMessage});
+        this.props.messageChangedCallback(updatedMessage);
     };
 }
-
 export default Message;
 
 
