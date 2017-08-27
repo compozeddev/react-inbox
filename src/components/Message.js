@@ -16,7 +16,7 @@ class Message extends React.Component {
                 <div className="col-xs-1">
                     <div className="row">
                         <div className="col-xs-2">
-                            <input type="checkbox" checked={this.state.message.selected}/>
+                            <input type="checkbox" checked={!!this.state.message.selected} onChange={this.onCheckboxClicked}/>
                         </div>
                         <div className="col-xs-2"  onClick={this.onStarClicked}>
                             <i className={`star fa ${(this.state.message.starred) ? "fa-star" : "fa-star-o"}`}></i>
@@ -47,7 +47,14 @@ class Message extends React.Component {
             starred: !this.state.message.starred
         };
         this.setState({message: updatedMessage});
+    };
 
+    onCheckboxClicked = () => {
+        const updatedMessage = {
+            ...this.state.message,
+            selected: !this.state.message.selected
+        };
+        this.setState({message: updatedMessage});
     }
 }
 
