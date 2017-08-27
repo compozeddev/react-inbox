@@ -13,14 +13,14 @@ class Message extends Component {
     render() {
         return (
             <div
-                className={`row message${(this.state.message.read) ? "read" : "unread"}${(this.state.message.selected) ? "selected" : "" }`}>
+                className={`row message ${(this.state.message.read) ? "read" : "unread"} ${(this.state.message.selected) ? "selected" : "" }`}>
                 <div className="col-xs-1">
                     <div className="row">
                         <div className="col-xs-2">
-                            <input type="checkbox" checked={this.state.message.checked}/>
+                            <input type="checkbox" checked={this.state.message.selected}/>
                         </div>
                         <div className="col-xs-2">
-                            <i className={`star fa${(this.state.message.starred) ? "fa-star" : "fa-star-o"}`}></i>
+                            <i className={`star fa ${(this.state.message.starred) ? "fa-star" : "fa-star-o"}`}></i>
                         </div>
                     </div>
                 </div>
@@ -37,7 +37,7 @@ class Message extends Component {
     renderMessageLabels = () => {
         return this.state.message.labels.map(
             (aLabel) => (
-                <span key={`message-${this.state.message.id}`} className="label label-warning"> {aLabel} </span>)
+                <span key={`message-${this.state.message.id}-${aLabel}`} className="label label-warning"> {aLabel} </span>)
         )
     };
 
