@@ -8,7 +8,7 @@ class Toolbar extends Component {
                 <div className="col-md-12">
                     <p className="pull-right">
                         <span className="badge badge">{this.countUnreadMessages()}</span>
-                        unread messages
+                        {`unread message${this.countUnreadMessages() === 1 ? "" : "s"}`}
                     </p>
 
                     <button className="btn btn-default" onClick={this.selectAllClicked}>
