@@ -15,11 +15,11 @@ class Toolbar extends Component {
                         <i className={this.classNameForSelectAll()}></i>
                     </button>
 
-                    <button className="btn btn-default">
+                    <button className="btn btn-default" onClick={this.markAllSelectedAsReadClicked}>
                         Mark As Read
                     </button>
 
-                    <button className="btn btn-default">
+                    <button className="btn btn-default" onClick={this.markAllSelectedAsUnreadClicked}>
                         Mark As Unread
                     </button>
 
@@ -57,6 +57,26 @@ class Toolbar extends Component {
         }
     };
 
+    markAllSelectedAsReadClicked = () => {
+        const updatedMessages = this.props.messages.map((aMessage) => {
+            return {
+                ...aMessage,
+                read: aMessage.selected ? true : aMessage.read
+            };
+        });
+        this.props.bulkMessageChangeCallback(updatedMessages);
+    };
+
+    markAllSelectedAsUnreadClicked = () => {
+        const updatedMessages = this.props.messages.map((aMessage) => {
+            return {
+                ...aMessage,
+                read: aMessage.selected ? false : aMessage.read
+            };
+        });
+        this.props.bulkMessageChangeCallback(updatedMessages);
+    };
+
     classNameForSelectAll = () => {
         if (this.allMessagesAlreadySelected()) {
             return "fa fa-check-square-o";
@@ -78,22 +98,22 @@ class Toolbar extends Component {
 
     unSelectAllMessages = () => {
         const updatedMessages = this.props.messages.map((aMessage) => {
-            const updatedMessage = {
+            return {
                 ...aMessage,
                 selected: false
             };
-            return updatedMessage
         });
+
         this.props.bulkMessageChangeCallback(updatedMessages);
     };
 
     selectAllMessages = () => {
         const updatedMessages = this.props.messages.map((aMessage) => {
-            const updatedMessage = {
+            return {
                 ...aMessage,
                 selected: true
             };
-            return updatedMessage
+
         });
         this.props.bulkMessageChangeCallback(updatedMessages);
     };
