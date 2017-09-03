@@ -58,9 +58,9 @@ class Toolbar extends Component {
 
     selectAllClicked = () => {
         if (this.allMessagesAlreadySelected()) {
-            this.unSelectAllMessages();
+            this.setAllMessagesIsSelectedTo(false);
         } else {
-            this.selectAllMessages();
+            this.setAllMessagesIsSelectedTo(true);
         }
     };
 
@@ -137,25 +137,14 @@ class Toolbar extends Component {
         return this.props.messages.filter(aMessage => aMessage.selected === true).length > 0;
     };
 
-    unSelectAllMessages = () => {
+    setAllMessagesIsSelectedTo = (isSelected) => {
         const updatedMessages = this.props.messages.map((aMessage) => {
             return {
                 ...aMessage,
-                selected: false
+                selected: isSelected
             };
         });
 
-        this.props.bulkMessageChangeCallback(updatedMessages);
-    };
-
-    selectAllMessages = () => {
-        const updatedMessages = this.props.messages.map((aMessage) => {
-            return {
-                ...aMessage,
-                selected: true
-            };
-
-        });
         this.props.bulkMessageChangeCallback(updatedMessages);
     };
 }

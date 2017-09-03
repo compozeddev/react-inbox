@@ -73,13 +73,20 @@ const seedData = [
         "labels": []
     }
 ];
+
 class App extends Component {
 
     constructor() {
         super();
         this.state = {
-            messages: seedData
+            messages: []
         }
+    }
+
+    async componentDidMount() {
+        const response = await fetch(`/api/messages`);
+        const json = await response.json();
+        this.setState({messages: json._embedded.messages});
     }
 
     render() {
