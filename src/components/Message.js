@@ -51,7 +51,13 @@ class Message extends React.Component {
             ...this.props.message,
             starred: !this.props.message.starred
         };
-        this.props.messageChangedCallback(updatedMessage);
+        const patchRequest = {
+            messageIds: [this.props.message.id],
+            command: 'star',
+            star: updatedMessage.starred
+        };
+
+        this.props.messageChangedCallback(updatedMessage, patchRequest);
     };
 
     onCheckboxClicked = () => {

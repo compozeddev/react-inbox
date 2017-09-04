@@ -65,56 +65,95 @@ class Toolbar extends Component {
     };
 
     markAllSelectedAsReadClicked = () => {
-        const updatedMessages = this.props.messages.map((aMessage) => {
-            return {
-                ...aMessage,
-                read: aMessage.selected ? true : aMessage.read
-            };
-        });
-        this.props.bulkMessageChangeCallback(updatedMessages);
+        this.changeSelectedIsReadStatus(true);
     };
 
     markAllSelectedAsUnreadClicked = () => {
+        this.changeSelectedIsReadStatus(false);
+    };
+
+    changeSelectedIsReadStatus = (isRead) => {
+        const patchRequest = {
+            messageIds: [],
+            command: 'read',
+            read: isRead
+        };
+
         const updatedMessages = this.props.messages.map((aMessage) => {
-            return {
-                ...aMessage,
-                read: aMessage.selected ? false : aMessage.read
-            };
+            if (aMessage.selected) {
+                patchRequest.messageIds.push(aMessage.id);
+                return {
+                    ...aMessage,
+                    read: isRead
+                }
+            }
+            else {
+                return aMessage
+            }
         });
-        this.props.bulkMessageChangeCallback(updatedMessages);
+
+        this.props.bulkMessageChangeCallback(updatedMessages, patchRequest);
     };
 
     deleteSelectedMessagesClicked = () => {
-        const notDeleted = this.props.messages.filter(aMessage => !aMessage.selected);
-        this.props.bulkMessageChangeCallback(notDeleted);
+        let deleted = [];
+        let notDeleted = [];
+        const patchRequest = {
+            messageIds: [],
+            command: 'delete',
+            delete: true
+        };
+
+        this.props.messages.map((aMessage) =>{
+            if (aMessage.selected){
+                patchRequest.messageIds.push(aMessage.id);
+                deleted.push(aMessage)
+            }
+            else {
+                notDeleted.push(aMessage)
+            }
+        });
+
+        this.props.bulkMessageChangeCallback(notDeleted, patchRequest);
     };
 
     onApplyLabel = (e) => {
+        let patchRequest = {
+            messageIds: [], command: 'addLabel', label: e.target.value
+        };
+
         const updatedMessages = this.props.messages.map((aMessage) => {
             if (!aMessage.selected || aMessage.labels.find(aLabel => aLabel === e.target.value)) {
                 return aMessage
             } else {
+                patchRequest.messageIds.push(aMessage.id);
                 return {
                     ...aMessage,
                     labels: [...aMessage.labels, (e.target.value)]
-                }
+                };
             }
         });
-        this.props.bulkMessageChangeCallback(updatedMessages);
+
+        this.props.bulkMessageChangeCallback(updatedMessages, patchRequest);
     };
 
     onRemoveLabel = (e) => {
+        let patchRequest = {
+            messageIds: [], command: 'removeLabel', label: e.target.value
+        };
+
         const updatedMessages = this.props.messages.map((aMessage) => {
-            if (!aMessage.selected) {
+            if (!aMessage.selected || !aMessage.labels.find(aLabel => aLabel === e.target.value)) {
                 return aMessage
             } else {
+                patchRequest.messageIds.push(aMessage.id);
                 return {
                     ...aMessage,
                     labels: aMessage.labels.filter(aLabel => aLabel !== e.target.value)
-                }
+                };
             }
         });
-        this.props.bulkMessageChangeCallback(updatedMessages);
+        this.props.bulkMessageChangeCallback(updatedMessages, patchRequest);
     };
 
     classNameForSelectAll = () => {

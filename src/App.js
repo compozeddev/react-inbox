@@ -98,9 +98,12 @@ class App extends Component {
         )
     }
 
-    messageChangedCallback = (aMessage) => {
-        const updatedMessages = this.state.messages.map( (stateMessage) => {
+    messageChangedCallback = (aMessage, patchRequest) => {
+        const updatedMessages = this.state.messages.map((stateMessage) => {
                 if (stateMessage.id === aMessage.id) {
+                    if (patchRequest) {
+                        this.sendPatchRequestToServer(patchRequest);
+                    }
                     return aMessage
                 } else {
                     return stateMessage
@@ -110,8 +113,24 @@ class App extends Component {
         this.setState({messages: updatedMessages});
     };
 
-    bulkMessageChangeCallback = (updatedMessages) => {
+    bulkMessageChangeCallback = (updatedMessages, patchRequest) => {
+        if (patchRequest) {
+            this.sendPatchRequestToServer(patchRequest);
+        }
         this.setState({messages: updatedMessages});
+    };
+
+    async sendPatchRequestToServer(patchRequest) {
+        console.log("patchRequstJSON", JSON.stringify(patchRequest));
+        const response = await fetch(`/api/messages`, {
+            method: 'PATCH',
+            body: JSON.stringify(patchRequest),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        console.log("response", response)
     }
 }
 export default App;
