@@ -9,7 +9,8 @@ class App extends Component {
     constructor() {
         super();
         this.state = {
-            messages: []
+            messages: [],
+            shouldShowComposeForm: false
         };
         this.newMessageCallback = this.newMessageCallback.bind(this);
     }
@@ -23,9 +24,13 @@ class App extends Component {
     render() {
         return (
             <div>
-                <Toolbar messages={this.state.messages} bulkMessageChangeCallback={this.bulkMessageChangeCallback}/>
-                <ComposeMessage newMessageCallback={this.newMessageCallback}/>
-                <Messages messages={this.state.messages} messageChangedCallback={this.messageChangedCallback}/>
+                <Toolbar messages={this.state.messages}
+                         bulkMessageChangeCallback={this.bulkMessageChangeCallback}
+                         composeButtonClickedCallback={this.composeButtonClickedCallback}/>
+                <ComposeMessage newMessageCallback={this.newMessageCallback}
+                                shouldShow={this.state.shouldShowComposeForm}/>
+                <Messages messages={this.state.messages}
+                          messageChangedCallback={this.messageChangedCallback}/>
             </div>
         )
     }
@@ -52,6 +57,10 @@ class App extends Component {
         this.setState({messages: updatedMessages});
     };
 
+    composeButtonClickedCallback = () => {
+        this.setState({shouldShowComposeForm: !this.state.shouldShowComposeForm})
+    };
+
     async newMessageCallback(newMessage) {
         const response = await fetch(`/api/messages`, {
             method: 'POST',
@@ -64,7 +73,7 @@ class App extends Component {
         console.log("response", response);
 
         const postedMessage = await response.json();
-        const newState = {messages: [...this.state.messages, postedMessage]};
+        const newState = {messages: [...this.state.messages, postedMessage], shouldShowComposeForm: false};
 
         this.setState(newState)
     };

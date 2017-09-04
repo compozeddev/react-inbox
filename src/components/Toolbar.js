@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 
 class Toolbar extends Component {
-    //receives messages and bulkMessageChangeCallback in props
+    //receives messages, bulkMessageChangeCallback, composeButtonClickedCallback in props
     render() {
         return (
             <div className="row toolbar">
@@ -10,6 +10,10 @@ class Toolbar extends Component {
                         <span className="badge badge">{this.countUnreadMessages()}</span>
                         {`unread message${this.countUnreadMessages() === 1 ? "" : "s"}`}
                     </p>
+
+                    <a className="btn btn-danger" onClick={this.composeButtonClicked}>
+                        <i className="fa fa-plus"></i>
+                    </a>
 
                     <button className="btn btn-default" onClick={this.selectAllClicked}>
                         <i className={this.classNameForSelectAll()}></i>
@@ -54,6 +58,10 @@ class Toolbar extends Component {
 
     countUnreadMessages = () => {
         return this.props.messages.filter(aMessage => aMessage.read === false).length;
+    };
+
+    composeButtonClicked = () => {
+        this.props.composeButtonClickedCallback();
     };
 
     selectAllClicked = () => {
