@@ -1,9 +1,15 @@
 import React from 'react';
-import Message from './Message'
+import Message from './Message';
+import {connect} from 'react-redux'
 
-const Messages = ({messages, messageChangedCallback}) => (
+const Messages = ({messages}) => (
     <div>
-        { messages.map(message => <Message key={ message.id } message={ message } messageChangedCallback={messageChangedCallback}/>) }
+        { messages.map(message => <Message key={ message.id } message={ message }/>) }
     </div>
 );
-export default Messages;
+
+const mapStateToProps = state => ({messages: state.messages});
+export default connect(
+    mapStateToProps,
+    null
+)(Messages)

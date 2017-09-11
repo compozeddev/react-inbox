@@ -1,94 +1,43 @@
-import React, {Component} from 'react';
+import React, {Component}from 'react';
 import Messages from './components/Messages';
 import Toolbar from './components/Toolbar';
 import './App.css';
 import ComposeMessage from "./components/ComposeMessage";
+import {connect} from 'react-redux';
 
 class App extends Component {
 
-    constructor() {
-        super();
-        this.state = {
-            messages: [],
-            shouldShowComposeForm: false
-        };
-        this.newMessageCallback = this.newMessageCallback.bind(this);
-    }
-
-    async componentDidMount() {
-        const response = await fetch(`/api/messages`);
-        const json = await response.json();
-        this.setState({messages: json._embedded.messages});
-    }
-
     render() {
+        console.log('App.js - messages ======> ', this.props.messages)
+        console.log('App.js - messages.length ======> ', this.props.messages.length)
         return (
-            <div>
-                <Toolbar messages={this.state.messages}
-                         bulkMessageChangeCallback={this.bulkMessageChangeCallback}
-                         composeButtonClickedCallback={this.composeButtonClickedCallback}/>
-                <ComposeMessage newMessageCallback={this.newMessageCallback}
-                                shouldShow={this.state.shouldShowComposeForm}/>
-                <Messages messages={this.state.messages}
-                          messageChangedCallback={this.messageChangedCallback}/>
-            </div>
-        )
-    }
+            (this.props.messages && this.props.messages.length) ?
+                (
+                    <div>
+                        <Toolbar messages={this.props.messages}
+                                 shouldShowComposeForm={this.props.shouldShowComposeForm}/>
+                        <ComposeMessage shouldShow={this.props.shouldShowComposeForm}/>
+                        <Messages messages={this.props.messages}/>
+                    </div>
+                ) :
+                (
+                    <div>Loading...</div>
+                )
 
-    messageChangedCallback = (aMessage, patchRequest) => {
-        const updatedMessages = this.state.messages.map((stateMessage) => {
-                if (stateMessage.id === aMessage.id) {
-                    if (patchRequest) {
-                        this.sendPatchRequestToServer(patchRequest);
-                    }
-                    return aMessage
-                } else {
-                    return stateMessage
-                }
-            }
         );
-        this.setState({messages: updatedMessages});
     };
-
-    bulkMessageChangeCallback = (updatedMessages, patchRequest) => {
-        if (patchRequest) {
-            this.sendPatchRequestToServer(patchRequest);
-        }
-        this.setState({messages: updatedMessages});
-    };
-
-    composeButtonClickedCallback = () => {
-        this.setState({shouldShowComposeForm: !this.state.shouldShowComposeForm})
-    };
-
-    async newMessageCallback(newMessage) {
-        const response = await fetch(`/api/messages`, {
-            method: 'POST',
-            body: JSON.stringify(newMessage),
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
-        console.log("response", response);
-
-        const postedMessage = await response.json();
-        const newState = {messages: [...this.state.messages, postedMessage], shouldShowComposeForm: false};
-
-        this.setState(newState)
-    };
-
-    async sendPatchRequestToServer(patchRequest) {
-        console.log("patchRequstJSON", JSON.stringify(patchRequest));
-        const response = await fetch(`/api/messages`, {
-            method: 'PATCH',
-            body: JSON.stringify(patchRequest),
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
-        console.log("response", response);
-    }
 }
-export default App;
+const mapStateToProps = (newState) => {
+    console.log('App.js - mapStateToProps newState', newState);
+
+    let newProps = {
+        messages: newState.messages,
+        shouldShowComposeForm: newState.shouldShowComposeForm
+    };
+
+    console.log('App.js - mapStateToProps newProps', newProps)
+    return newProps;
+};
+
+
+export default connect(mapStateToProps, null)(App)

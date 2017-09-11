@@ -1,93 +1,42 @@
-import React, {Component} from 'react';
+import React from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {composeButtonClicked, bulkMessageUpdate} from '../actions'
 
-class Toolbar extends Component {
-    //receives messages, bulkMessageChangeCallback, composeButtonClickedCallback in props
-    render() {
-        return (
-            <div className="row toolbar">
-                <div className="col-md-12">
-                    <p className="pull-right">
-                        <span className="badge badge">{this.countUnreadMessages()}</span>
-                        {`unread message${this.countUnreadMessages() === 1 ? "" : "s"}`}
-                    </p>
-
-                    <a className="btn btn-danger" onClick={this.composeButtonClicked}>
-                        <i className="fa fa-plus"></i>
-                    </a>
-
-                    <button className="btn btn-default" onClick={this.selectAllClicked}>
-                        <i className={this.classNameForSelectAll()}></i>
-                    </button>
-
-                    <button className="btn btn-default" disabled={this.someMessagesAlreadySelected() ? "" : "disabled"}
-                            onClick={this.markAllSelectedAsReadClicked}>
-                        Mark As Read
-                    </button>
-
-                    <button className="btn btn-default" disabled={this.someMessagesAlreadySelected() ? "" : "disabled"}
-                            onClick={this.markAllSelectedAsUnreadClicked}>
-                        Mark As Unread
-                    </button>
-
-                    <select className="form-control label-select"
-                            disabled={this.someMessagesAlreadySelected() ? "" : "disabled"}
-                            onChange={this.onApplyLabel}>
-                        <option>Apply label</option>
-                        <option value="dev">dev</option>
-                        <option value="personal">personal</option>
-                        <option value="gschool">gschool</option>
-                    </select>
-
-                    <select className="form-control label-select"
-                            disabled={this.someMessagesAlreadySelected() ? "" : "disabled"}
-                            onChange={this.onRemoveLabel}>
-                        <option>Remove label</option>
-                        <option value="dev">dev</option>
-                        <option value="personal">personal</option>
-                        <option value="gschool">gschool</option>
-                    </select>
-
-                    <button className="btn btn-default" onClick={this.deleteSelectedMessagesClicked}
-                            disabled={this.someMessagesAlreadySelected() ? "" : "disabled"}>
-                        <i className="fa fa-trash-o"></i>
-                    </button>
-                </div>
-            </div>
-        )
-    }
-
-    countUnreadMessages = () => {
-        return this.props.messages.filter(aMessage => aMessage.read === false).length;
+const Toolbar = (messages, shouldShowComposeForm) => {
+    const countUnreadMessages = () => {
+        console.log('Toolbar messages:', messages)
+        return messages.filter(aMessage => aMessage.read === false).length;
     };
 
-    composeButtonClicked = () => {
-        this.props.composeButtonClickedCallback();
+    const composeButtonClicked = () => {
+        composeButtonClicked(!shouldShowComposeForm)
     };
 
-    selectAllClicked = () => {
-        if (this.allMessagesAlreadySelected()) {
-            this.setAllMessagesIsSelectedTo(false);
+    const selectAllClicked = () => {
+        if (allMessagesAlreadySelected()) {
+            setAllMessagesIsSelectedTo(false);
         } else {
-            this.setAllMessagesIsSelectedTo(true);
+            setAllMessagesIsSelectedTo(true);
         }
     };
 
-    markAllSelectedAsReadClicked = () => {
-        this.changeSelectedIsReadStatus(true);
+    const markAllSelectedAsReadClicked = () => {
+        changeSelectedIsReadStatus(true);
     };
 
-    markAllSelectedAsUnreadClicked = () => {
-        this.changeSelectedIsReadStatus(false);
+    const markAllSelectedAsUnreadClicked = () => {
+        changeSelectedIsReadStatus(false);
     };
 
-    changeSelectedIsReadStatus = (isRead) => {
+    const changeSelectedIsReadStatus = (isRead) => {
         const patchRequest = {
             messageIds: [],
             command: 'read',
             read: isRead
         };
 
-        const updatedMessages = this.props.messages.map((aMessage) => {
+        const updatedMessages = messages.map((aMessage) => {
             if (aMessage.selected) {
                 patchRequest.messageIds.push(aMessage.id);
                 return {
@@ -100,10 +49,10 @@ class Toolbar extends Component {
             }
         });
 
-        this.props.bulkMessageChangeCallback(updatedMessages, patchRequest);
+        bulkMessageUpdate(updatedMessages, patchRequest);
     };
 
-    deleteSelectedMessagesClicked = () => {
+    const deleteSelectedMessagesClicked = () => {
         let deleted = [];
         let notDeleted = [];
         const patchRequest = {
@@ -112,8 +61,8 @@ class Toolbar extends Component {
             delete: true
         };
 
-        this.props.messages.map((aMessage) =>{
-            if (aMessage.selected){
+        messages.map((aMessage) => {
+            if (aMessage.selected) {
                 patchRequest.messageIds.push(aMessage.id);
                 deleted.push(aMessage)
             }
@@ -122,15 +71,15 @@ class Toolbar extends Component {
             }
         });
 
-        this.props.bulkMessageChangeCallback(notDeleted, patchRequest);
+        bulkMessageUpdate(notDeleted, patchRequest);
     };
 
-    onApplyLabel = (e) => {
+    const onApplyLabel = (e) => {
         let patchRequest = {
             messageIds: [], command: 'addLabel', label: e.target.value
         };
 
-        const updatedMessages = this.props.messages.map((aMessage) => {
+        const updatedMessages = messages.map((aMessage) => {
             if (!aMessage.selected || aMessage.labels.find(aLabel => aLabel === e.target.value)) {
                 return aMessage
             } else {
@@ -142,15 +91,15 @@ class Toolbar extends Component {
             }
         });
 
-        this.props.bulkMessageChangeCallback(updatedMessages, patchRequest);
+        bulkMessageUpdate(updatedMessages, patchRequest);
     };
 
-    onRemoveLabel = (e) => {
+    const onRemoveLabel = (e) => {
         let patchRequest = {
             messageIds: [], command: 'removeLabel', label: e.target.value
         };
 
-        const updatedMessages = this.props.messages.map((aMessage) => {
+        const updatedMessages = messages.map((aMessage) => {
             if (!aMessage.selected || !aMessage.labels.find(aLabel => aLabel === e.target.value)) {
                 return aMessage
             } else {
@@ -161,40 +110,113 @@ class Toolbar extends Component {
                 };
             }
         });
-        this.props.bulkMessageChangeCallback(updatedMessages, patchRequest);
+        bulkMessageUpdate(updatedMessages, patchRequest);
     };
 
-    classNameForSelectAll = () => {
-        if (this.allMessagesAlreadySelected()) {
+    const classNameForSelectAll = () => {
+        if (allMessagesAlreadySelected()) {
             return "fa fa-check-square-o";
         }
 
-        if (this.someMessagesAlreadySelected()) {
+        if (someMessagesAlreadySelected()) {
             return "fa fa-minus-square-o";
         } else {
             return "fa fa-square-o";
         }
     };
 
-    allMessagesAlreadySelected = () => {
-        return this.props.messages.length === this.props.messages.filter(aMessage => aMessage.selected === true).length
+    const allMessagesAlreadySelected = () => {
+        return messages.length === messages.filter(aMessage => aMessage.selected === true).length
     };
 
-    someMessagesAlreadySelected = () => {
-        return this.props.messages.filter(aMessage => aMessage.selected === true).length > 0;
+    const someMessagesAlreadySelected = () => {
+        return messages.filter(aMessage => aMessage.selected === true).length > 0;
     };
 
-    setAllMessagesIsSelectedTo = (isSelected) => {
-        const updatedMessages = this.props.messages.map((aMessage) => {
+    const setAllMessagesIsSelectedTo = (isSelected) => {
+        const updatedMessages = messages.map((aMessage) => {
             return {
                 ...aMessage,
                 selected: isSelected
             };
         });
 
-        this.props.bulkMessageChangeCallback(updatedMessages);
+        bulkMessageUpdate(updatedMessages);
     };
-}
 
-export default Toolbar;
+    return (
+        <div className="row toolbar">
+            <div className="col-md-12">
+                <p className="pull-right">
+                    <span className="badge badge">{countUnreadMessages()}</span>
+                    {`unread message${countUnreadMessages() === 1 ? "" : "s"}`}
+                </p>
+
+                <a className="btn btn-danger" onClick={composeButtonClicked}>
+                    <i className="fa fa-plus"></i>
+                </a>
+
+                <button className="btn btn-default" onClick={selectAllClicked}>
+                    <i className={classNameForSelectAll()}></i>
+                </button>
+
+                <button className="btn btn-default" disabled={someMessagesAlreadySelected() ? "" : "disabled"}
+                        onClick={markAllSelectedAsReadClicked}>
+                    Mark As Read
+                </button>
+
+                <button className="btn btn-default" disabled={someMessagesAlreadySelected() ? "" : "disabled"}
+                        onClick={markAllSelectedAsUnreadClicked}>
+                    Mark As Unread
+                </button>
+
+                <select className="form-control label-select"
+                        disabled={someMessagesAlreadySelected() ? "" : "disabled"}
+                        onChange={onApplyLabel}>
+                    <option>Apply label</option>
+                    <option value="dev">dev</option>
+                    <option value="personal">personal</option>
+                    <option value="gschool">gschool</option>
+                </select>
+
+                <select className="form-control label-select"
+                        disabled={someMessagesAlreadySelected() ? "" : "disabled"}
+                        onChange={onRemoveLabel}>
+                    <option>Remove label</option>
+                    <option value="dev">dev</option>
+                    <option value="personal">personal</option>
+                    <option value="gschool">gschool</option>
+                </select>
+
+                <button className="btn btn-default" onClick={deleteSelectedMessagesClicked}
+                        disabled={someMessagesAlreadySelected() ? "" : "disabled"}>
+                    <i className="fa fa-trash-o"></i>
+                </button>
+            </div>
+        </div>
+    );
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        actions: {
+            composeButtonClicked: bindActionCreators(composeButtonClicked, dispatch),
+            bulkMessageUpdate: bindActionCreators(bulkMessageUpdate, dispatch),
+        }
+    }
+};
+
+const mapStateToProps = (state) => {
+    return (
+        {
+            shouldShowComposeForm: state.shouldShowComposeForm,
+            messages: state.messages
+        }
+    );
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Toolbar);
 

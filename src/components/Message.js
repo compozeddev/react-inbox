@@ -1,73 +1,81 @@
 import React from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {updateMessage} from '../actions'
 
-class Message extends React.Component {
-    // receives a message and messageChangedCallback in props
+const Message = ({message}) => {
 
-    shouldComponentUpdate(nextProps) {
-        return !(nextProps.message.id === this.props.message.id
-            && nextProps.message.subject === this.props.message.subject
-            && nextProps.message.read === this.props.message.read
-            && nextProps.message.starred === this.props.message.starred
-            && nextProps.message.selected === this.props.message.selected
-            && nextProps.message.labels.length === this.props.message.labels.length
-        )
-    }
+    //TODO: can you run shouldComponentUpdate from a pure function?
+    //TODO: Do we really need to mapStateToProps if messages are passed in?
+    // const shouldComponentUpdate(nextProps)
+    // {
+    //     return !(nextProps.message.id === message.id
+    //         && nextProps.message.subject === message.subject
+    //         && nextProps.message.read === message.read
+    //         && nextProps.message.starred === message.starred
+    //         && nextProps.message.selected === message.selected
+    //         && nextProps.message.labels.length === message.labels.length
+    //     )
+    // };
 
-    render() {
-        return (
-            <div
-                className={`row message ${(this.props.message.read) ? "read" : "unread"} ${(this.props.message.selected) ? "selected" : "" }`}>
-                <div className="col-xs-1">
-                    <div className="row">
-                        <div className="col-xs-2">
-                            <input type="checkbox" checked={!!this.props.message.selected}
-                                   onChange={this.onCheckboxClicked}/>
-                        </div>
-                        <div className="col-xs-2" onClick={this.onStarClicked}>
-                            <i className={`star fa ${(this.props.message.starred) ? "fa-star" : "fa-star-o"}`}></i>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-xs-11">
-                    {this.renderMessageLabels()}
-                    <a href="#">
-                        {this.props.message.subject}
-                    </a>
-                </div>
-            </div>
-        )
-    }
-
-    renderMessageLabels = () => {
-        return this.props.message.labels.map(
+    const renderMessageLabels = () => {
+        return message.labels.map(
             (aLabel) => (
-                <span key={`message-${this.props.message.id}-${aLabel}`}
+                <span key={`message-${message.id}-${aLabel}`}
                       className="label label-warning"> {aLabel} </span>)
         )
     };
 
-    onStarClicked = () => {
+    const onStarClicked = () => {
         const updatedMessage = {
-            ...this.props.message,
-            starred: !this.props.message.starred
+            ...message,
+            starred: !message.starred
         };
         const patchRequest = {
-            messageIds: [this.props.message.id],
+            messageIds: [message.id],
             command: 'star',
             star: updatedMessage.starred
         };
 
-        this.props.messageChangedCallback(updatedMessage, patchRequest);
+        updateMessage(updatedMessage, patchRequest);
     };
 
-    onCheckboxClicked = () => {
+    const onCheckboxClicked = () => {
         const updatedMessage = {
-            ...this.props.message,
-            selected: !this.props.message.selected
+            ...message,
+            selected: !message.selected
         };
-        this.props.messageChangedCallback(updatedMessage);
+        updateMessage(updatedMessage);
     };
-}
-export default Message;
 
+    return (
+        <div
+            className={`row message ${(message.read) ? "read" : "unread"} ${(message.selected) ? "selected" : "" }`}>
+            <div className="col-xs-1">
+                <div className="row">
+                    <div className="col-xs-2">
+                        <input type="checkbox" checked={!!message.selected}
+                               onChange={onCheckboxClicked}/>
+                    </div>
+                    <div className="col-xs-2" onClick={onStarClicked}>
+                        <i className={`star fa ${(message.starred) ? "fa-star" : "fa-star-o"}`}></i>
+                    </div>
+                </div>
+            </div>
+            <div className="col-xs-11">
+                {renderMessageLabels()}
+                <a href="#">
+                    {message.subject}
+                </a>
+            </div>
+        </div>
+    )
+};
 
+const mapStateToProps = (state) => ({message: state.message});
+const mapDispatchToProps = (dispatch) => bindActionCreators({updateMessage: updateMessage}, dispatch);
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Message)
