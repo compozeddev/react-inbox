@@ -8,8 +8,6 @@ import {connect} from 'react-redux';
 class App extends Component {
 
     render() {
-        console.log('App.js - messages ======> ', this.props.messages)
-        console.log('App.js - messages.length ======> ', this.props.messages.length)
         return (
             (this.props.messages && this.props.messages.length) ?
                 (
@@ -28,16 +26,13 @@ class App extends Component {
     };
 }
 const mapStateToProps = (newState) => {
-    console.log('App.js - mapStateToProps newState', newState);
+    console.log('App.js - newState', newState);
 
     let newProps = {
         messages: newState.messages,
         shouldShowComposeForm: newState.shouldShowComposeForm
     };
-
-    console.log('App.js - mapStateToProps newProps', newProps)
     return newProps;
 };
-
 
 export default connect(mapStateToProps, null)(App)

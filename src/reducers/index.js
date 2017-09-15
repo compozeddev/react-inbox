@@ -7,10 +7,12 @@ import {
     BULK_MESSAGE_UPDATE
 } from '../actions';
 
-const messages = (state = {messages: [], shouldShowComposeForm: false}, action) => {
+const messages = (state = {messages: []}, action) => {
     let newState;
     switch (action.type) {
+
         case MESSAGES_RECEIVED:
+            console.log("MESSAGES_RECEIVED reducer - action.messages", action.messages)
             newState = {
                 ...state,
                 messages: action.messages
@@ -58,13 +60,11 @@ const messages = (state = {messages: [], shouldShowComposeForm: false}, action) 
     }
 };
 
-
-const shouldShowComposeForm = (state = {messages: [], shouldShowComposeForm: false}, action) => {
+const shouldShowComposeForm = (state = {shouldShowComposeForm: false}, action) => {
     switch (action.type) {
         case COMPOSE_BUTTON_CLICKED:
             const newState = {
-                shouldShowComposeForm: action.shouldShowComposeForm,
-                messages: state.messages
+                shouldShowComposeForm: action.shouldShowComposeForm
             };
             console.log("COMPOSE_BUTTON_CLICKED reducer - newState = ", newState)
             return newState;

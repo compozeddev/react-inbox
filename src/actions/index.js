@@ -20,7 +20,7 @@ export const fetchMessages = () => {
                 type: MESSAGES_RECEIVED,
                 messages: json._embedded.messages
             };
-        console.log('actions/index.js - dispatching: ', dispatchMessage)
+        console.log('actions/index.js - dispatching: ', dispatchMessage.messages)
         dispatch(dispatchMessage)
     }
 };
