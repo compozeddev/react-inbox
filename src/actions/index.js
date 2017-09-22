@@ -1,31 +1,33 @@
 export const COMPOSE_BUTTON_CLICKED = 'COMPOSE_BUTTON_CLICKED';
-export const composeButtonClicked = (shouldShowComposeForm) => {
+export const MESSAGE_CREATED = 'MESSAGE_CREATED';
+export const MESSAGE_UPDATED = 'MESSAGE_UPDATED';
+export const MESSAGES_RECEIVED = 'MESSAGES_RECEIVED';
+export const BULK_MESSAGE_UPDATE = 'BULK_MESSAGE_UPDATE';
+
+export const setShouldShowComposeForm = (shouldShowComposeForm) => {
     return (dispatch) => {
-        const dispatchMessage ={
+        const action = {
             type: COMPOSE_BUTTON_CLICKED,
             shouldShowComposeForm: shouldShowComposeForm
         };
-        console.log('actions/index.js - dispatching: ', dispatchMessage)
-        dispatch(dispatchMessage)
+        dispatch(action)
     }
 };
 
-export const MESSAGES_RECEIVED = 'MESSAGES_RECEIVED';
 export const fetchMessages = () => {
     return async (dispatch) => {
         const response = await fetch(`/api/messages`);
         const json = await response.json();
-        const dispatchMessage =
+        const action =
             {
                 type: MESSAGES_RECEIVED,
                 messages: json._embedded.messages
             };
-        console.log('actions/index.js - dispatching: ', dispatchMessage.messages)
-        dispatch(dispatchMessage)
+        dispatch(action)
     }
 };
 
-export const MESSAGE_CREATED = 'MESSAGE_CREATED';
+
 export const createMessage = (newMessage) => {
     return async (dispatch) => {
         const response = await fetch(`/api/messages`, {
@@ -36,24 +38,19 @@ export const createMessage = (newMessage) => {
                 'Accept': 'application/json'
             }
         });
-        console.log("response", response);
-
         const postedMessage = await response.json();
-        const dispatchMessage = {
+        const action = {
             type: MESSAGE_CREATED,
             message: postedMessage
-        }
-        console.log('actions/index.js - dispatching: ', dispatchMessage)
-        dispatch(dispatchMessage)
+        };
+        dispatch(action)
     }
 };
 
-export const MESSAGE_UPDATED = 'MESSAGE_UPDATED';
 export const updateMessage = (updatedMessage, patchRequest) => {
     return async (dispatch) => {
-        console.log("patchRequestJSON", JSON.stringify(patchRequest));
         if (patchRequest) {
-            const response = await fetch(`/api/messages`, {
+            await fetch(`/api/messages`, {
                 method: 'PATCH',
                 body: JSON.stringify(patchRequest),
                 headers: {
@@ -61,34 +58,32 @@ export const updateMessage = (updatedMessage, patchRequest) => {
                     'Accept': 'application/json'
                 }
             });
-            console.log("response", response);
         }
-        const dispatchMessage = {
+        const action = {
             type: MESSAGE_UPDATED,
             message: updatedMessage
-        }
-        console.log('actions/index.js - dispatching: ', dispatchMessage)
-        dispatch(dispatchMessage)
+        };
+        dispatch(action)
     }
 };
 
-export const BULK_MESSAGE_UPDATE = 'BULK_MESSAGE_UPDATE';
+
 export const bulkMessageUpdate = (updatedMessages, patchRequest) => {
     return async (dispatch) => {
-        const response = await fetch(`/api/messages`, {
-            method: 'PATCH',
-            body: JSON.stringify(patchRequest),
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
-        console.log("response", response);
-        const dispatchMessage = {
+        if (patchRequest) {
+            await fetch(`/api/messages`, {
+                method: 'PATCH',
+                body: JSON.stringify(patchRequest),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+        }
+        const action = {
             type: BULK_MESSAGE_UPDATE,
             messages: updatedMessages
         };
-        console.log('actions/index.js - dispatching: ', dispatchMessage)
-        dispatch(dispatchMessage)
+        dispatch(action)
     }
 };

@@ -1,6 +1,5 @@
-import React from 'react';
-import Message from './Message';
-import {connect} from 'react-redux'
+import React from "react";
+import Message from "./Message";
 
 const Messages = ({messages}) => (
     <div>
@@ -8,8 +7,4 @@ const Messages = ({messages}) => (
     </div>
 );
 
-const mapStateToProps = state => ({messages: state.messages});
-export default connect(
-    mapStateToProps,
-    null
-)(Messages)
+export default Messages;

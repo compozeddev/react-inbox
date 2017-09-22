@@ -9,12 +9,12 @@ class App extends Component {
 
     render() {
         return (
-            (this.props.messages && this.props.messages.length) ?
+            (this.props.messages) ?
                 (
                     <div>
                         <Toolbar messages={this.props.messages}
                                  shouldShowComposeForm={this.props.shouldShowComposeForm}/>
-                        <ComposeMessage shouldShow={this.props.shouldShowComposeForm}/>
+                        <ComposeMessage/>
                         <Messages messages={this.props.messages}/>
                     </div>
                 ) :
@@ -26,11 +26,9 @@ class App extends Component {
     };
 }
 const mapStateToProps = (newState) => {
-    console.log('App.js - newState', newState);
-
     let newProps = {
-        messages: newState.messages,
-        shouldShowComposeForm: newState.shouldShowComposeForm
+        messages: newState.messages.all,
+        shouldShowComposeForm: newState.views.shouldShowComposeForm
     };
     return newProps;
 };

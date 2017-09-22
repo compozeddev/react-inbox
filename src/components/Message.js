@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {updateMessage} from '../actions'
 
-const Message = ({message}) => {
+const Message = ({message, updateMessage}) => {
 
     //TODO: can you run shouldComponentUpdate from a pure function?
     //TODO: Do we really need to mapStateToProps if messages are passed in?
@@ -72,10 +72,9 @@ const Message = ({message}) => {
     )
 };
 
-const mapStateToProps = (state) => ({message: state.message});
 const mapDispatchToProps = (dispatch) => bindActionCreators({updateMessage: updateMessage}, dispatch);
 
 export default connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
 )(Message)

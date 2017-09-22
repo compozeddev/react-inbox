@@ -1,16 +1,15 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {composeButtonClicked, bulkMessageUpdate} from '../actions'
+import {setShouldShowComposeForm, bulkMessageUpdate} from '../actions'
 
-const Toolbar = (messages, shouldShowComposeForm) => {
+const Toolbar = ({messages, shouldShowComposeForm, setShouldShowComposeForm, bulkMessageUpdate}) => {
     const countUnreadMessages = () => {
-        console.log('Toolbar messages:', messages)
         return messages.filter(aMessage => aMessage.read === false).length;
     };
 
-    const composeButtonClicked = () => {
-        composeButtonClicked(!shouldShowComposeForm)
+    const composeButtonOnClick = () => {
+        setShouldShowComposeForm(!shouldShowComposeForm)
     };
 
     const selectAllClicked = () => {
@@ -152,7 +151,7 @@ const Toolbar = (messages, shouldShowComposeForm) => {
                     {`unread message${countUnreadMessages() === 1 ? "" : "s"}`}
                 </p>
 
-                <a className="btn btn-danger" onClick={composeButtonClicked}>
+                <a className="btn btn-danger" onClick={composeButtonOnClick}>
                     <i className="fa fa-plus"></i>
                 </a>
 
@@ -197,26 +196,10 @@ const Toolbar = (messages, shouldShowComposeForm) => {
     );
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        actions: {
-            composeButtonClicked: bindActionCreators(composeButtonClicked, dispatch),
-            bulkMessageUpdate: bindActionCreators(bulkMessageUpdate, dispatch),
-        }
-    }
-};
-
-const mapStateToProps = (state) => {
-    return (
-        {
-            shouldShowComposeForm: state.shouldShowComposeForm,
-            messages: state.messages
-        }
-    );
-};
+const mapDispatchToProps = (dispatch) => bindActionCreators({ setShouldShowComposeForm, bulkMessageUpdate}, dispatch);
 
 export default connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
 )(Toolbar);
 

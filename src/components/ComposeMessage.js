@@ -1,25 +1,18 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {createMessage} from '../actions';
+import {createMessage, setShouldShowComposeForm} from '../actions';
 
-const ComposeMessage = (shouldShowComposeForm) => {
+const ComposeMessage = ({shouldShowComposeForm, createMessage, setShouldShowComposeForm}) => {
 
     const onSubmit = (e) => {
         e.preventDefault();
         let newMessage = {
-            subject: this.state.messageSubject,
-            body: this.state.messageBody,
+            subject: e.target.subject.value,
+            body: e.target.body.value,
         };
         createMessage(newMessage);
-    };
-
-    const onSubjectChanged = (e) => {
-        this.setState({messageSubject: e.target.value})
-    };
-
-    const onBodyChanged = (e) => {
-        this.setState({messageBody: e.target.value})
+        setShouldShowComposeForm(false);
     };
 
     return (
@@ -35,13 +28,13 @@ const ComposeMessage = (shouldShowComposeForm) => {
                     <label htmlFor="subject" className="col-sm-2 control-label">Subject</label>
                     <div className="col-sm-8">
                         <input type="text" className="form-control" id="subject" placeholder="Enter a subject"
-                               name="subject" onBlur={onSubjectChanged}/>
+                               name="subject" />
                     </div>
                 </div>
                 <div className="form-group">
                     <label htmlFor="body" className="col-sm-2 control-label">Body</label>
                     <div className="col-sm-8">
-                        <textarea name="body" id="body" className="form-control" onBlur={onBodyChanged}></textarea>
+                        <textarea name="body" id="body" className="form-control" ></textarea>
                     </div>
                 </div>
                 <div className="form-group">
@@ -57,11 +50,7 @@ const ComposeMessage = (shouldShowComposeForm) => {
 };
 
 
-const mapStateToProps = state => ({});
+const mapStateToProps = storeState => ({shouldShowComposeForm: storeState.views.shouldShowComposeForm});
+const mapDispatchToProps = (dispatch) => bindActionCreators({createMessage, setShouldShowComposeForm}, dispatch);
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({onSubmit: createMessage}, dispatch);
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(ComposeMessage)
+export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage)
