@@ -1,6 +1,5 @@
 import {combineReducers} from 'redux';
 import {
-    COMPOSE_BUTTON_CLICKED,
     MESSAGES_RECEIVED,
     MESSAGE_CREATED,
     MESSAGE_UPDATED,
@@ -51,16 +50,16 @@ const messages = (state = {all: []}, action) => {
     }
 };
 
-const views = (state = {shouldShowComposeForm: false}, action) => {
-    switch (action.type) {
-        case COMPOSE_BUTTON_CLICKED:
-            const newState = {
-                shouldShowComposeForm: action.shouldShowComposeForm
-            };
-            return newState;
-        default:
-            return state
-    }
-};
+// const views = (state = {shouldShowComposeForm: false}, action) => {
+//     switch (action.type) {
+//         case COMPOSE_BUTTON_CLICKED:
+//             const newState = {
+//                 shouldShowComposeForm: action.shouldShowComposeForm
+//             };
+//             return newState;
+//         default:
+//             return state
+//     }
+// };
 
-export default combineReducers({messages, views})
+export default combineReducers({messages})

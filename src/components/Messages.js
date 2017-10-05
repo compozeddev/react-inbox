@@ -1,5 +1,7 @@
 import React from "react";
 import Message from "./Message";
+import {withRouter} from 'react-router-dom';
+
 
 const Messages = ({messages}) => (
     <div>
@@ -7,4 +9,4 @@ const Messages = ({messages}) => (
     </div>
 );
 
-export default Messages;
+export default withRouter(Messages);

@@ -1,20 +1,9 @@
-export const COMPOSE_BUTTON_CLICKED = 'COMPOSE_BUTTON_CLICKED';
 export const MESSAGE_CREATED = 'MESSAGE_CREATED';
 export const MESSAGE_UPDATED = 'MESSAGE_UPDATED';
 export const MESSAGES_RECEIVED = 'MESSAGES_RECEIVED';
 export const BULK_MESSAGE_UPDATE = 'BULK_MESSAGE_UPDATE';
 
-export const setShouldShowComposeForm = (shouldShowComposeForm) => {
-    return (dispatch) => {
-        const action = {
-            type: COMPOSE_BUTTON_CLICKED,
-            shouldShowComposeForm: shouldShowComposeForm
-        };
-        dispatch(action)
-    }
-};
-
-export const fetchMessages = () => {
+export const fetchMessagesAction = () => {
     return async (dispatch) => {
         const response = await fetch(`/api/messages`);
         const json = await response.json();
@@ -27,8 +16,7 @@ export const fetchMessages = () => {
     }
 };
 
-
-export const createMessage = (newMessage) => {
+export const createMessageAction = (newMessage, history) => {
     return async (dispatch) => {
         const response = await fetch(`/api/messages`, {
             method: 'POST',
@@ -43,11 +31,12 @@ export const createMessage = (newMessage) => {
             type: MESSAGE_CREATED,
             message: postedMessage
         };
-        dispatch(action)
+        dispatch(action);
+        history.push('/');
     }
 };
 
-export const updateMessage = (updatedMessage, patchRequest) => {
+export const updateMessageAction = (updatedMessage, patchRequest) => {
     return async (dispatch) => {
         if (patchRequest) {
             await fetch(`/api/messages`, {
@@ -68,7 +57,7 @@ export const updateMessage = (updatedMessage, patchRequest) => {
 };
 
 
-export const bulkMessageUpdate = (updatedMessages, patchRequest) => {
+export const bulkMessageUpdateAction = (updatedMessages, patchRequest) => {
     return async (dispatch) => {
         if (patchRequest) {
             await fetch(`/api/messages`, {

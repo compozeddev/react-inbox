@@ -4,6 +4,8 @@ import Toolbar from './components/Toolbar';
 import './App.css';
 import ComposeMessage from "./components/ComposeMessage";
 import {connect} from 'react-redux';
+import {Route, withRouter} from 'react-router-dom';
+
 
 class App extends Component {
 
@@ -12,9 +14,8 @@ class App extends Component {
             (this.props.messages) ?
                 (
                     <div>
-                        <Toolbar messages={this.props.messages}
-                                 shouldShowComposeForm={this.props.shouldShowComposeForm}/>
-                        <ComposeMessage/>
+                        <Toolbar messages={this.props.messages}/>
+                        <Route path="/compose" component={ ComposeMessage }/>
                         <Messages messages={this.props.messages}/>
                     </div>
                 ) :
@@ -27,10 +28,9 @@ class App extends Component {
 }
 const mapStateToProps = (newState) => {
     let newProps = {
-        messages: newState.messages.all,
-        shouldShowComposeForm: newState.views.shouldShowComposeForm
+        messages: newState.messages.all
     };
     return newProps;
 };
 
-export default connect(mapStateToProps, null)(App)
+export default withRouter(connect(mapStateToProps, null)(App));

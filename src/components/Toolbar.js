@@ -1,15 +1,12 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {setShouldShowComposeForm, bulkMessageUpdate} from '../actions'
+import {bulkMessageUpdateAction} from '../actions'
+import {withRouter} from 'react-router-dom'
 
-const Toolbar = ({messages, shouldShowComposeForm, setShouldShowComposeForm, bulkMessageUpdate}) => {
+const Toolbar = ({messages, bulkMessageUpdateAction, history}) => {
     const countUnreadMessages = () => {
         return messages.filter(aMessage => aMessage.read === false).length;
-    };
-
-    const composeButtonOnClick = () => {
-        setShouldShowComposeForm(!shouldShowComposeForm)
     };
 
     const selectAllClicked = () => {
@@ -26,6 +23,14 @@ const Toolbar = ({messages, shouldShowComposeForm, setShouldShowComposeForm, bul
 
     const markAllSelectedAsUnreadClicked = () => {
         changeSelectedIsReadStatus(false);
+    };
+
+    const composeButtonOnClick = () => {
+        if (history.location.pathname !== '/compose') {
+            history.push('/compose');
+        } else {
+            history.push('/');
+        }
     };
 
     const changeSelectedIsReadStatus = (isRead) => {
@@ -48,7 +53,7 @@ const Toolbar = ({messages, shouldShowComposeForm, setShouldShowComposeForm, bul
             }
         });
 
-        bulkMessageUpdate(updatedMessages, patchRequest);
+        bulkMessageUpdateAction(updatedMessages, patchRequest);
     };
 
     const deleteSelectedMessagesClicked = () => {
@@ -70,7 +75,7 @@ const Toolbar = ({messages, shouldShowComposeForm, setShouldShowComposeForm, bul
             }
         });
 
-        bulkMessageUpdate(notDeleted, patchRequest);
+        bulkMessageUpdateAction(notDeleted, patchRequest);
     };
 
     const onApplyLabel = (e) => {
@@ -90,7 +95,7 @@ const Toolbar = ({messages, shouldShowComposeForm, setShouldShowComposeForm, bul
             }
         });
 
-        bulkMessageUpdate(updatedMessages, patchRequest);
+        bulkMessageUpdateAction(updatedMessages, patchRequest);
     };
 
     const onRemoveLabel = (e) => {
@@ -109,7 +114,7 @@ const Toolbar = ({messages, shouldShowComposeForm, setShouldShowComposeForm, bul
                 };
             }
         });
-        bulkMessageUpdate(updatedMessages, patchRequest);
+        bulkMessageUpdateAction(updatedMessages, patchRequest);
     };
 
     const classNameForSelectAll = () => {
@@ -140,7 +145,7 @@ const Toolbar = ({messages, shouldShowComposeForm, setShouldShowComposeForm, bul
             };
         });
 
-        bulkMessageUpdate(updatedMessages);
+        bulkMessageUpdateAction(updatedMessages);
     };
 
     return (
@@ -196,10 +201,10 @@ const Toolbar = ({messages, shouldShowComposeForm, setShouldShowComposeForm, bul
     );
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({ setShouldShowComposeForm, bulkMessageUpdate}, dispatch);
+const mapDispatchToProps = (dispatch) => bindActionCreators({bulkMessageUpdateAction}, dispatch);
 
-export default connect(
+export default withRouter(connect(
     null,
     mapDispatchToProps
-)(Toolbar);
+)(Toolbar));
 

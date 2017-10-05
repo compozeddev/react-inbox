@@ -1,9 +1,9 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {updateMessage} from '../actions'
+import {updateMessageAction} from '../actions'
 
-const Message = ({message, updateMessage}) => {
+const Message = ({message, updateMessageAction}) => {
 
     //TODO: can you run shouldComponentUpdate from a pure function?
     //TODO: Do we really need to mapStateToProps if messages are passed in?
@@ -37,7 +37,7 @@ const Message = ({message, updateMessage}) => {
             star: updatedMessage.starred
         };
 
-        updateMessage(updatedMessage, patchRequest);
+        updateMessageAction(updatedMessage, patchRequest);
     };
 
     const onCheckboxClicked = () => {
@@ -45,7 +45,7 @@ const Message = ({message, updateMessage}) => {
             ...message,
             selected: !message.selected
         };
-        updateMessage(updatedMessage);
+        updateMessageAction(updatedMessage);
     };
 
     return (
@@ -72,8 +72,9 @@ const Message = ({message, updateMessage}) => {
     )
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({updateMessage: updateMessage}, dispatch);
+const mapDispatchToProps = (dispatch) => bindActionCreators({updateMessageAction: updateMessageAction}, dispatch);
 
+//TODO: do i need withRouter?
 export default connect(
     null,
     mapDispatchToProps
