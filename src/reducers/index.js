@@ -3,7 +3,8 @@ import {
     MESSAGES_RECEIVED,
     MESSAGE_CREATED,
     MESSAGE_UPDATED,
-    BULK_MESSAGE_UPDATE
+    BULK_MESSAGE_UPDATE,
+    MESSAGE_BODY_RECEIVED
 } from '../actions';
 
 const messages = (state = {all: []}, action) => {
@@ -26,7 +27,7 @@ const messages = (state = {all: []}, action) => {
             return newState;
 
         case MESSAGE_UPDATED:
-            const updatedMessages = state.all.map((stateMessage) => {
+            const messagesAfterMessageUpdated = state.all.map((stateMessage) => {
                     if (stateMessage.id === action.message.id) {
                         return action.message
                     } else {
@@ -35,7 +36,21 @@ const messages = (state = {all: []}, action) => {
                 }
             );
             newState = {
-                all: updatedMessages
+                all: messagesAfterMessageUpdated
+            };
+            return newState;
+
+        case MESSAGE_BODY_RECEIVED:
+            const messagesAfterMessageBodyReceived = state.all.map((stateMessage) => {
+                    if (stateMessage.id === action.messageId) {
+                        return action.message
+                    } else {
+                        return stateMessage
+                    }
+                }
+            );
+            newState = {
+                all: messagesAfterMessageBodyReceived
             };
             return newState;
 

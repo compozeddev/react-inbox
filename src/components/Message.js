@@ -1,29 +1,21 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {updateMessageAction} from '../actions'
+import {updateMessageAction, fetchMessageBodyAction} from '../actions'
 
-const Message = ({message, updateMessageAction}) => {
-
-    //TODO: can you run shouldComponentUpdate from a pure function?
-    //TODO: Do we really need to mapStateToProps if messages are passed in?
-    // const shouldComponentUpdate(nextProps)
-    // {
-    //     return !(nextProps.message.id === message.id
-    //         && nextProps.message.subject === message.subject
-    //         && nextProps.message.read === message.read
-    //         && nextProps.message.starred === message.starred
-    //         && nextProps.message.selected === message.selected
-    //         && nextProps.message.labels.length === message.labels.length
-    //     )
-    // };
+const Message = ({id, message, raiseUpdateMessageAction, raiseFetchMessageBodyAction}) => {
 
     const renderMessageLabels = () => {
         return message.labels.map(
             (aLabel) => (
-                <span key={`message-${message.id}-${aLabel}`}
+                <span key={`message-${id}-${aLabel}`}
                       className="label label-warning"> {aLabel} </span>)
         )
+    };
+
+    const onMessageClicked = () => {
+        console.error('message clicked', message);
+        raiseFetchMessageBodyAction(message);
     };
 
     const onStarClicked = () => {
@@ -32,12 +24,12 @@ const Message = ({message, updateMessageAction}) => {
             starred: !message.starred
         };
         const patchRequest = {
-            messageIds: [message.id],
+            messageIds: [id],
             command: 'star',
             star: updatedMessage.starred
         };
 
-        updateMessageAction(updatedMessage, patchRequest);
+        raiseUpdateMessageAction(updatedMessage, patchRequest);
     };
 
     const onCheckboxClicked = () => {
@@ -45,7 +37,7 @@ const Message = ({message, updateMessageAction}) => {
             ...message,
             selected: !message.selected
         };
-        updateMessageAction(updatedMessage);
+        raiseUpdateMessageAction(updatedMessage);
     };
 
     return (
@@ -64,15 +56,16 @@ const Message = ({message, updateMessageAction}) => {
             </div>
             <div className="col-xs-11">
                 {renderMessageLabels()}
-                <a href="#">
+                <div onClick={onMessageClicked}>
                     {message.subject}
-                </a>
+                </div>
+
             </div>
         </div>
     )
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({updateMessageAction: updateMessageAction}, dispatch);
+const mapDispatchToProps = (dispatch) => bindActionCreators({raiseUpdateMessageAction: updateMessageAction, raiseFetchMessageBodyAction: fetchMessageBodyAction}, dispatch);
 
 //TODO: do i need withRouter?
 export default connect(

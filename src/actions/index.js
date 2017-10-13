@@ -1,6 +1,7 @@
 export const MESSAGE_CREATED = 'MESSAGE_CREATED';
 export const MESSAGE_UPDATED = 'MESSAGE_UPDATED';
 export const MESSAGES_RECEIVED = 'MESSAGES_RECEIVED';
+export const MESSAGE_BODY_RECEIVED = 'MESSAGE_BODY_RECEIVED';
 export const BULK_MESSAGE_UPDATE = 'BULK_MESSAGE_UPDATE';
 
 export const fetchMessagesAction = () => {
@@ -11,6 +12,23 @@ export const fetchMessagesAction = () => {
             {
                 type: MESSAGES_RECEIVED,
                 messages: json._embedded.messages
+            };
+        dispatch(action)
+    }
+};
+export const fetchMessageBodyAction = (message) => {
+    console.error('fetchMessageBody', message)
+    return async (dispatch) => {
+        const response = await fetch(`/api/messages/${message.id}`);
+        console.error('after response')
+        const json = await response.json();
+        console.error('json', json)
+        const action =
+            {
+                type: MESSAGE_BODY_RECEIVED,
+                messageId: message.id,
+                message: { ...message,
+                body: json.body}
             };
         dispatch(action)
     }
